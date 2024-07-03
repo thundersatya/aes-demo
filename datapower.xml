@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="2.0" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:dp="http://www.datapower.com/extensions"
+    extension-element-prefixes="dp">
+
+    <!-- Key and IV should be base64 encoded -->
+    <xsl:param name="key">YourBase64EncodedKey==</xsl:param>
+    <xsl:param name="iv">YourBase64EncodedIV==</xsl:param>
+
+    <xsl:template match="/">
+        <xsl:variable name="data" select="'YourDataToEncrypt'" />
+        <xsl:variable name="encryptedData">
+            <dp:crypto type="encrypt" algorithm="aes-cbc" key="{ $key }" iv="{ $iv }">
+                <xsl:value-of select="$data" />
+            </dp:crypto>
+        </xsl:variable>
+        
+        <result>
+            <encryptedData>
+                <xsl:value-of select="$encryptedData" />
+            </encryptedData>
+        </result>
+    </xsl:template>
+</xsl:stylesheet>
+
+	1.	Key and IV: Ensure your key and IV are base64 encoded. You can generate these using any cryptographic library or tool that supports AES.
+	2.	dp:crypto Function: This function is used to perform the encryption. The type="encrypt" specifies that it’s an encryption operation. The algorithm="aes-cbc" specifies the AES algorithm in CBC mode.
+	3.	Input Data: The data to be encrypted is provided in the variable $data. In a real scenario, this would typically be dynamically retrieved from the input message.
