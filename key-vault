@@ -10,6 +10,10 @@
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-azure-starter-keyvault-secrets</artifactId>
 </dependency>
+ <dependency>
+        <groupId>com.azure</groupId>
+        <artifactId>azure-identity</artifactId>
+    </dependency>
 
 
  spring:
@@ -20,3 +24,20 @@
 
 @Value("${<YourSecretKey>}")
 private String secret;
+
+
+package com.example.demo.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
+
+@Configuration
+public class KeyVaultConfig {
+
+    @Value("${your.secret.property.name}")
+    private String secretValue;
+
+    public String getSecretValue() {
+        return secretValue;
+    }
+}
