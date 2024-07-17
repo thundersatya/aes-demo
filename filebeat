@@ -1,0 +1,49 @@
+ filebeat.inputs:
+- type: log
+  paths:
+    - /path/to/your/log/files/*.log
+
+processors:
+- drop_event:
+    when:
+      not:
+        regexp:
+          message: 'your_specific_error_pattern'
+
+output.http:
+  enabled: true
+  url: "https://your-api-endpoint.com/endpoint"
+  method: "POST"
+  headers:
+    Content-Type: application/json
+  params:
+    key: "your_api_key" # If your API requires a key
+  json:
+    enable: true
+    pretty: true
+  send_headers:
+    X-Custom-Header: Value
+
+
+
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/*.log
+
+processors:
+- drop_event:
+    when:
+      not:
+        regexp:
+          message: 'ERROR.*Critical'
+
+output.http:
+  enabled: true
+  url: "https://api.example.com/handle_error"
+  method: "POST"
+  headers:
+    Content-Type: application/json
+  json:
+    enable: true
