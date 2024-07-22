@@ -1,0 +1,26 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /path/to/your/first/log/file.log
+  fields:
+    kafka_topic: "first_topic"
+  fields_under_root: true
+
+- type: log
+  enabled: true
+  paths:
+    - /path/to/your/second/log/file.log
+  fields:
+    kafka_topic: "second_topic"
+  fields_under_root: true
+
+output.kafka:
+  enabled: true
+  hosts: ["kafka_broker_1:9092", "kafka_broker_2:9092"]
+  topic: '%{[kafka_topic]}'
+  partition.round_robin:
+    reachable_only: false
+  required_acks: 1
+  compression: gzip
+  max_message_bytes: 1000000
