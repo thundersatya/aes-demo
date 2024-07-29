@@ -1,0 +1,27 @@
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobClientBuilder;
+import com.azure.storage.blob.models.BlobHttpHeaders;
+
+public class UploadFileToAzure {
+    public static void main(String[] args) {
+        // Replace with your connection string
+        String connectionString = "DefaultEndpointsProtocol=https;AccountName=<account-name>;AccountKey=<account-key>;EndpointSuffix=core.windows.net";
+        // Replace with your container name and blob name
+        String containerName = "mycontainer";
+        String blobName = "myfile.txt";
+        // Replace with the path to the file you want to upload
+        String filePath = "C:/path/to/your/file.txt";
+
+        // Create a BlobClient
+        BlobClient blobClient = new BlobClientBuilder()
+                .connectionString(connectionString)
+                .containerName(containerName)
+                .blobName(blobName)
+                .buildClient();
+
+        // Upload the file
+        blobClient.uploadFromFile(filePath, true);
+
+        System.out.println("File uploaded successfully.");
+    }
+}
