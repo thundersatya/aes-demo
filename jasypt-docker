@@ -1,0 +1,27 @@
+# Base image for Filebeat
+FROM docker.elastic.co/beats/filebeat:8.10.1
+
+# Set environment variables for Jasypt (Optional, depending on your setup)
+ENV JASYPT_ENCRYPTOR_PASSWORD=<your-encryption-password>
+
+# Install JDK (for Jasypt)
+RUN apt-get update && \
+    apt-get install -y openjdk-11-jre-headless && \
+    apt-get clean
+
+# Download and install Jasypt CLI tool
+RUN wget https://repo1.maven.org/maven2/org/jasypt/jasypt/1.9.3/jasypt-1.9.3-dist.zip && \
+    unzip jasypt-1.9.3-dist.zip -d /opt/ && \
+    rm jasypt-1.9.3-dist.zip
+
+# Copy your customized Filebeat configuration file into the container
+COPY filebeat.yml /usr/share/filebeat/filebeat.yml
+
+# Example command to decrypt values in filebeat.yml using Jasypt (this is optional and should be executed in runtime or as a separate entrypoint)
+RUN /opt/jasypt-1.9.3/bin/encrypt.sh input="ENC(your_encrypted_value)" password=$JASYPT_ENCRYPTOR_PASSWORD
+
+# Expose Filebeat port (if necessary)
+EXPOSE 5044
+
+# Start Filebeat
+ENTRYPOINT ["/usr/share/filebeat/filebeat", "-e", "-c", "/usr/share/filebeat/filebeat.yml"]
