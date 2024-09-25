@@ -38,3 +38,36 @@ app:
   name: {{APP_NAME}}
   version: {{VERSION}}
   environment: {{ENVIRONMENT}}
+
+
+
+
+
+
+
+
+#!/bin/bash
+
+# Define the values for your variables
+NAME="Aashrith"
+AGE="12"
+LOCATION="Hyderabad"
+
+# Path to your template YAML file
+TEMPLATE_FILE="template.yml"
+
+# Create the output file
+OUTPUT_FILE="output.yml"
+
+# Use sed to replace placeholders with variable values
+sed -e "s/\${NAME}/$NAME/g" \
+    -e "s/\${AGE}/$AGE/g" \
+    -e "s/\${LOCATION}/$LOCATION/g" \
+    $TEMPLATE_FILE > $OUTPUT_FILE
+
+echo "Replaced variables in $TEMPLATE_FILE and saved to $OUTPUT_FILE."
+
+
+name: ${NAME}
+age: ${AGE}
+location: ${LOCATION}
