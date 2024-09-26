@@ -71,3 +71,11 @@ echo "Replaced variables in $TEMPLATE_FILE and saved to $OUTPUT_FILE."
 name: ${NAME}
 age: ${AGE}
 location: ${LOCATION}
+
+
+# Set any custom environment variables or configurations here
+# Example: Changing Prometheus configuration path
+PROMETHEUS_CONFIG="/etc/prometheus/prometheus.yml"
+
+# Start Prometheus with custom options
+/bin/prometheus --config.file=$PROMETHEUS_CONFIG --storage.tsdb.path="/prometheus" --web.console.templates="/etc/prometheus/consoles" --web.console.libraries="/etc/prometheus/console_libraries"
