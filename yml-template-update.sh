@@ -79,3 +79,6 @@ PROMETHEUS_CONFIG="/etc/prometheus/prometheus.yml"
 
 # Start Prometheus with custom options
 /bin/prometheus --config.file=$PROMETHEUS_CONFIG --storage.tsdb.path="/prometheus" --web.console.templates="/etc/prometheus/consoles" --web.console.libraries="/etc/prometheus/console_libraries"
+
+wget http://ftp.us.debian.org/debian/pool/main/a/apt/apt_<version>.deb
+sudo dpkg -i apt_<version>.deb
