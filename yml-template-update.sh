@@ -82,3 +82,36 @@ PROMETHEUS_CONFIG="/etc/prometheus/prometheus.yml"
 
 wget http://ftp.us.debian.org/debian/pool/main/a/apt/apt_<version>.deb
 sudo dpkg -i apt_<version>.deb
+
+
+
+
+[
+  {
+    "targets": ["192.168.1.100:9100"],
+    "labels": {
+      "job": "node_exporter",
+      "env": "production",
+      "metrics_path": "/custom-node-metrics"
+    }
+  },
+  {
+    "targets": ["192.168.1.101:8080"],
+    "labels": {
+      "job": "app_metrics",
+      "env": "staging",
+      "metrics_path": "/app-metrics"
+    }
+  }
+]
+
+scrape_configs:
+  - job_name: 'file_sd_job'
+    file_sd_configs:
+      - files:
+          - '/etc/prometheus/file_sd.json'
+    relabel_configs:
+      - source_labels: ['__meta_filepath']
+        action: replace
+        target_label: '__metrics_path__'
+        source_labels: ['metrics_path']
