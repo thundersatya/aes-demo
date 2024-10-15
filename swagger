@@ -27,3 +27,14 @@ public class OpenApiConfig {
                             .email("support@myapi.com")));
     }
 }
+
+@Configuration
+public class SwaggerWebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/swagger-ui/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/")
+                .setCachePeriod(3600);
+    }
+}
