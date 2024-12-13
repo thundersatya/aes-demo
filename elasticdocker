@@ -1,0 +1,36 @@
+# Use the official Elasticsearch image as a base
+FROM docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+
+# Specify the user and group details
+ARG USERNAME=appJavaD
+ARG PRIMARY_GROUP=appJavaD
+ARG COMMON_GROUP=appgcc
+ARG USER_ID=1001
+ARG PRIMARY_GROUP_ID=1001
+ARG COMMON_GROUP_ID=2001
+
+# Install necessary tools
+USER root
+RUN yum -y install shadow-utils && yum clean all
+
+# Create the groups
+RUN groupadd -g $PRIMARY_GROUP_ID $PRIMARY_GROUP \
+    && groupadd -g $COMMON_GROUP_ID $COMMON_GROUP
+
+# Create the user and add it to both groups
+RUN useradd -u $USER_ID -g $PRIMARY_GROUP -G $COMMON_GROUP -d /usr/share/elasticsearch $USERNAME \
+    && mkdir -p /usr/share/elasticsearch \
+    && chown -R $USERNAME:$PRIMARY_GROUP /usr/share/elasticsearch
+
+# Switch to the custom user
+USER $USERNAME
+
+# Environment settings for Elasticsearch
+ENV discovery.type=single-node
+
+# Expose the Elasticsearch port
+EXPOSE 9200 9300
+
+# Start Elasticsearch
+ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/docker-entrypoint.sh"]
+CMD ["eswrapper"]
