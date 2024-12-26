@@ -1,0 +1,13 @@
+	•	OIDC Logout URL: When a user logs out of Grafana, they will be redirected to the configured logout_url provided by your OIDC provider, where the session will be terminated.
+
+
+  [auth.oidc]
+enabled = true
+client_id = my-client-id
+client_secret = my-client-secret
+scopes = openid profile email
+auth_url = https://my-idp.com/authorize
+token_url = https://my-idp.com/token
+api_url = https://my-idp.com/userinfo
+logout_url = https://my-idp.com/logout
+redirect_to = https://my-app.com/after-logout
