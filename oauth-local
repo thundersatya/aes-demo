@@ -1,0 +1,15 @@
+http://localhost:8080/auth/realms/TestRealm/protocol/openid-connect/auth
+?client_id=my-client
+&redirect_uri=http://localhost:3000/callback
+&response_type=code
+&scope=openid%20profile
+
+
+http://localhost:3000/callback?code=<authorization_code>
+curl -X POST \
+  http://localhost:8080/auth/realms/TestRealm/protocol/openid-connect/token \
+  -d "grant_type=authorization_code" \
+  -d "code=<authorization_code>" \
+  -d "redirect_uri=http://localhost:3000/callback" \
+  -d "client_id=my-client" \
+  -d "client_secret=<your-client-secret>"
