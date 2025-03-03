@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Set Elasticsearch URL
+ES_URL="http://localhost:9200"
+
+# Get the current date in YYYY.MM.DD format
+CURRENT_DATE=$(date +%Y.%m.%d)
+
+# Get a list of all indices with their creation date
+# Use _cat/indices to get the list of indices and creation dates
+indices=$(curl -s -X GET "$ES_URL/_cat/indices?v&h=index,creation.date.string")
+
+# Iterate over each index
+echo "$indices" | while read -r line; do
+  # Split the line into index name and creation date
+  index_name=$(echo $line | awk '{print $1}')
+  creation_date=$(echo $line | awk '{print $2}')
+
+  # Skip the header row
+  if [ "$index_name" == "index" ]; then
+    continue
+  fi
+
+  # Convert creation date to a format we can compare (YYYY.MM.DD)
+  index_creation_date=$(date -d "$creation_date" +%Y.%m.%d)
+
+  # Calculate the difference in days between the current date and the index creation date
+  days_diff=$(( ( $(date -d "$CURRENT_DATE" +%s) - $(date -d "$index_creation_date" +%s) ) / 86400 ))
+
+  # If the index is older than 5 days, delete it
+  if [ "$days_diff" -gt 5 ]; then
+    echo "Deleting index $index_name (Created on: $index_creation_date, $days_diff days old)"
+    curl -X DELETE "$ES_URL/$index_name"
+  fi
+done
