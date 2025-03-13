@@ -1,0 +1,9 @@
+apiVersion: 1
+
+users:
+  - name: readonly_user
+    email: readonly@example.com
+    login: readonly_user
+    password: readonly123
+    isAdmin: false
+    role: Viewer
