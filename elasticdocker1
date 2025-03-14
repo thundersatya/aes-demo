@@ -1,0 +1,48 @@
+# Use official Elasticsearch image
+FROM docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+
+# Set a non-root user
+ARG USERNAME=nonrootuser
+ARG UID=1001
+ARG GID=1001
+
+# Install necessary packages
+USER root
+RUN apt-get update && apt-get install -y \
+    cron \
+    nano \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user
+RUN groupadd -g $GID $USERNAME && \
+    useradd -m -u $UID -g $GID -s /bin/bash $USERNAME
+
+# Set up working directory
+WORKDIR /home/$USERNAME
+
+# Copy the cron job script
+COPY myscript.sh /home/$USERNAME/myscript.sh
+RUN chmod +x /home/$USERNAME/myscript.sh
+
+# Copy the crontab file
+COPY crontabfile /home/$USERNAME/crontabfile
+RUN chown $USERNAME:$USERNAME /home/$USERNAME/myscript.sh /home/$USERNAME/crontabfile
+
+# Copy the custom entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Set permissions for the non-root user
+RUN chown -R $USERNAME:$USERNAME /usr/share/elasticsearch
+
+# Expose Elasticsearch ports
+EXPOSE 9200 9300
+
+# Switch to non-root user
+USER $USERNAME
+
+# Install the crontab
+RUN crontab /home/$USERNAME/crontabfile
+
+# Use custom entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
