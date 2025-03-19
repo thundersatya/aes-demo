@@ -1,0 +1,54 @@
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: DiskSpace Alerts
+    folder: Alerts
+    interval: 1m
+    rules:
+      - uid: disk_usage_high
+        title: High Disk Usage
+        condition: B
+        data:
+          - refId: A
+            datasourceUid: P8F5B12D4
+            model:
+              editorMode: code
+              expr: >
+                (1 - (disk_free_bytes{instance="localhost:8080"} / disk_total_bytes{instance="localhost:8080"})) * 100 > 90
+              intervalMs: 1000
+              maxDataPoints: 43200
+              datasource:
+                type: prometheus
+                uid: P8F5B12D4
+          - refId: B
+            relativeTimeRange:
+              from: 60
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 90
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - A
+                  reducer:
+                    type: avg
+                  type: query
+              datasource:
+                type: __expr__
+              expression: A
+              type: threshold
+        annotations:
+          summary: "Disk space usage is above 90%"
+        labels:
+          severity: critical
+        for: 1m
+        noDataState: NoData
+        execErrState: Error
+        notifications:
+          - uid: diskspace_email_alert
